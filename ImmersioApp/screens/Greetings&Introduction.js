@@ -94,8 +94,6 @@ function ClassicalStudiesScholarScreen() {
             <Text style={{fontSize: Responsive(14),color:'gray', marginHorizontal:Responsive(18)}}>{lessonIntroDescription2}</Text>
           </View>
         </View>
-        <MaterialIcons name="file-download" size={30} style={{marginTop: Responsive(6), alignSelf:'center', color:"#008B8B"}} />
-        <Text style={{alignSelf:'center', color:'#008b8b', fontSize:Responsive(12), marginBottom:Responsive(4)}}>Download Learning Guidelines</Text>
         <View style={main.lessonNavButtonArea}> 
           { isVideo.finished && <TouchableOpacity style={main.lessonContinueButton}
                   onPress={()=>{

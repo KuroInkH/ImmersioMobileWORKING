@@ -74,7 +74,7 @@ function App() {
 
   async function playSound() {
     console.log('Loading sound');
-    const {sound} = await Audio.Sound.createAsync(require('../assets/Cree/tani.mp3'));
+    const {sound} = await Audio.Sound.createAsync(require('../assets/Cree/tani_e-isinhkasoyan.mp3'));
     setSound(sound);
     console.log('playing sound');
     await sound.playAsync();

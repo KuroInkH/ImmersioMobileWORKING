@@ -74,7 +74,7 @@ function App() {
 
   async function playSound() {
     console.log('Loading sound');
-    const {sound} = await Audio.Sound.createAsync(require('../assets/Cree/nitisinihkason.mp3'));
+    const {sound} = await Audio.Sound.createAsync(require('../assets/Cree/nestakila.mp3'));
     setSound(sound);
     console.log('playing sound');
     await sound.playAsync();
@@ -167,7 +167,7 @@ function App() {
           width:45, height: 45, padding:5}}
           disabled={disable}
                 onPress={()=>{
-                  navigation.navigate("review")
+                  navigation.navigate("Question and Answer")
                   _storeData('done'); 
                 }}>
           <Image 
