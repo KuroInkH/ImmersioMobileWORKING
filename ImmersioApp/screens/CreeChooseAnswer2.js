@@ -64,7 +64,7 @@ function App() {
 const wrongAnswer1 = () => {
     setQuestionColor1('#F88989');
     setTimeout(()=>{
-      setQuestionColor1('#DADADA');
+      setQuestionColor1('white');
     }, 1500);
   };
 

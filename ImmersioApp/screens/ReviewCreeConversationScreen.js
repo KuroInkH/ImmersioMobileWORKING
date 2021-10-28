@@ -30,6 +30,100 @@ function App() {
     stop:true
   });
 
+  const [trackConversation, setTrackConversation] = useState({
+    one:true,
+    two:false,
+    three:false,
+    done:false
+})
+
+  const [disabled, setDisabled] = useState({
+    one:false,
+    two:false,
+    three:false
+  })
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: (StackHeaderLeftButtonProps) => <MenuIcon />
+    });
+    /*
+    const ac = new AbortController ();
+    loadText();
+    return () => ac.abort();
+    */
+  });
+
+
+  const [recording, setRecording] = React.useState();
+  const [sound, setSound] = React.useState();
+
+  async function startRecording() {
+    try {
+      console.log('Requesting permissions..');
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      }); 
+      console.log('Starting recording..');
+      const { recording } = await Audio.Recording.createAsync(
+         Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+      );
+      setRecording(recording);
+      console.log('Recording started');
+    } catch (err) {
+      console.error('Failed to start recording', err);
+    }
+  }
+
+  async function stopRecording() {
+    console.log('Stopping recording..');
+    setRecording(undefined);
+    await recording.stopAndUnloadAsync();
+    const uri = recording.getURI(); 
+    console.log(uri)
+    //console.log('Recording stopped and stored at', uri);
+
+    /*
+    const { mySound, status } = await recording.createNewLoadedSoundAsync(
+      {
+        isLooping: false,
+      },
+    );
+    sound = mySound;*/
+    playSound(uri);
+  }
+
+  async function playSound(myUri) {
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+    });
+
+    const { sound } = await Audio.Sound.createAsync({
+      uri: myUri,
+    });
+    setSound(sound);
+
+    console.log('Playing Sound', myUri);
+    await sound.playAsync(); }
+
+  React.useEffect(() => {
+    return sound
+      ? () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync(); }
+      : undefined;
+  }, [sound]);
+
+  async function onPlayPause() {
+    if (sound != null) {
+      sound.stopAsync();
+      sound.playAsync();
+    } else { console.log("empty sound")}
+  }
+
+
   const showModal = () => {
     setModalVisible(true);
     setTimeout(()=>{
@@ -39,7 +133,29 @@ function App() {
   const bubbleWidth = (Dimensions.get('window').width * 0.6);
   //const screenCenter = (Dimensions.get('window').width / 2) - 23;
 
-  const [sound, setSound] = useState();
+  async function dialogue1(){
+    if(!disabled.one){
+      setTimeout(()=>{
+        setDisabled({one:true})
+      }, 7500)
+    }
+  }
+
+  async function dialogue2(){
+    if(!disabled.two){
+      setTimeout(()=>{
+        setDisabled({one:true, two:true})
+      }, 7000)
+    }
+  }
+
+  async function dialogue3(){
+    if(!disabled.three){
+      setTimeout(()=>{
+        setDisabled({one:true, two:true, three:true})
+      }, 3500)
+    }
+  }
 
   async function sound1() {
     stopSound()
@@ -91,23 +207,7 @@ async function stopSound() {
     Audio.setIsEnabledAsync(true);
   }
 
-  const [trackConversation, setTrackConversation] = useState({
-    one:true,
-    two:false,
-    three:false,
-    done:false
-})
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerLeft: (StackHeaderLeftButtonProps) => <MenuIcon />
-    });
-    /*
-    const ac = new AbortController ();
-    loadText();
-    return () => ac.abort();
-    */
-  });
+  
 
   return (
     <SafeAreaView style={main.safeAreaContainer}>
@@ -131,7 +231,7 @@ async function stopSound() {
       </View>
      
       <View>
-        <TouchableOpacity style={styles.leftBubble} onPress={()=>{sound1()}}>
+        <TouchableOpacity style={styles.leftBubble} onPress={()=>{sound1(), dialogue1()}}>
             <Text style={{fontWeight:'bold',marginHorizontal:Responsive(14), marginVertical:Responsive(8), color:'white', fontSize:18, maxWidth:bubbleWidth, paddingLeft:35}}>ᐙᒋᔦ   ᕃᒐᓪ ᓂᑎᔑᓂᐦᑳᓱᓐˣ  ᑖᓂ ᐁ ᐃᔑᓂᐦᑳᓱᔭᓐˣ</Text>
             <View style={{position: "absolute",
               justifyContent: 'center',
@@ -148,9 +248,9 @@ async function stopSound() {
         <Text style={{alignSelf:'flex-end', color:'gray', fontSize:17, marginRight: 25}}> Tâni e-išinihkâsoyan? </Text>
       </View>
 
-      {
+      { disabled.one &&
         <View>
-          <TouchableOpacity style={styles.rightBubble} onPress={()=>{sound2()}}>
+          <TouchableOpacity style={styles.rightBubble} onPress={()=>{sound2(), dialogue2()}}>
               <Text style={{fontWeight:'bold',marginHorizontal:Responsive(14), marginVertical:Responsive(8), color:'#956424', fontSize:18, maxWidth:bubbleWidth+10, paddingLeft:35}}>ᐯᓐ ᓂᑎᔑᓂᐦᑳᓱᓐx ᒨᓭ ᕝᐊᒡᑐᕐᔾ ᓂᑑᐦᒌᓐ᙮ ᓀᔥᑕ ᑮᓚx</Text>
               <View style={{position: "absolute",
                 justifyContent: 'center',
@@ -168,9 +268,9 @@ async function stopSound() {
         </View>
       }
 
-      {
+      { disabled.two &&
         <View>
-        <TouchableOpacity style={styles.leftBubble} onPress={()=>{sound3()}}>
+        <TouchableOpacity style={styles.leftBubble} onPress={()=>{sound3(), dialogue3()}}>
             <Text style={{fontWeight:'bold',marginHorizontal:Responsive(14), marginVertical:Responsive(8), color:'white', fontSize:18, maxWidth:bubbleWidth, paddingLeft:35}}>ᑳᐸᔅᑳᓯᓐᒃ ᓂᑑᐦᒌᓐx</Text>
             <View style={{position: "absolute",
               justifyContent: 'center',
@@ -187,7 +287,7 @@ async function stopSound() {
       </View>
       }
 
-      {
+      { disabled.three &&
         <View>
           <TouchableOpacity style={styles.rightBubble} onPress={()=>{sound4(), setTimeout(()=>{ navigation.navigate("Greetings & introduction") }, 3000) }}>
               <Text style={{fontWeight:'bold',marginHorizontal:Responsive(14), marginVertical:Responsive(8), color:'#956424', fontSize:18, maxWidth:bubbleWidth+10, paddingLeft:35}}>ᑳ</Text>
@@ -208,25 +308,22 @@ async function stopSound() {
 
 
 
-
-
-
-      <View style={{flexDirection: 'row', marginTop:130, justifyContent:'center'}}>
+      <View style={{flexDirection: 'row', position:'absolute', top:650, left:115, justifyContent:'center'}}>
         {
-          isRecording.recording && <TouchableOpacity style={styles.micButton} onPress={()=>{trackIsRecording({stop: true, recording:false})/*, stopRecording()*/}}>
+          isRecording.recording && <TouchableOpacity style={styles.micButton} onPress={()=>{trackIsRecording({stop: true, recording:false}), stopRecording()}}>
             <View style={styles.stopButton}></View>
           </TouchableOpacity>
         }
 
         {
-          isRecording.stop && <TouchableOpacity style={styles.micButton} onPress={()=>{trackIsRecording({recording: true, stop:false})/*, /*startRecording()*/}}>
+          isRecording.stop && <TouchableOpacity style={styles.micButton} onPress={()=>{trackIsRecording({recording: true, stop:false}), startRecording()}}>
             {/*<TouchableOpacity style={styles.stopButton}></TouchableOpacity>*/}
             <Image source={require('../assets/mic.png')} resizeMode='contain' style={styles.micImage}/>
           {/*<Image source={require('./assets/mic.png')} resizeMode='contain' style={{marginVertical:Responsive(3)}}/>*/}
           </TouchableOpacity>
         }
 
-        <TouchableOpacity style={styles.micButton} onPress={()=>{/*onPlayPause()*/}}>
+        <TouchableOpacity style={styles.micButton} onPress={()=>{onPlayPause()}}>
           <Image source={require('../assets/play.png')} resizeMode='contain' style={styles.playImage}/>
         </TouchableOpacity>
       </View>
@@ -241,7 +338,7 @@ const styles = StyleSheet.create({
     alignSelf:'flex-start', 
     borderRadius:Responsive(15), 
     marginTop:Responsive(12), 
-    marginRight:Responsive(10), 
+    marginLeft:Responsive(10), 
     padding:5, paddingLeft:25,
     shadowColor: "gray",
     shadowOffset: {
@@ -273,7 +370,7 @@ const styles = StyleSheet.create({
     width: 65,
     height:65,
     borderRadius: 32.5,
-    marginLeft: 15,
+    marginLeft: 25,
   }, 
   micImage:{
     width:35,

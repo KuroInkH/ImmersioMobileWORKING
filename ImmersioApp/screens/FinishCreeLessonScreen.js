@@ -27,7 +27,7 @@ function WelcomeScreen() {
 
   return (
     <SafeAreaView style={main.safeAreaContainer}>
-    <View style={main.lessonNameArea}>
+    <View style={main.lessonNameAreaLatin}>
       <TouchableOpacity>
       </TouchableOpacity>
       <Text style={{color:'#595959', fontSize:16, textAlign: 'center', color: 'white', fontSize:Responsive( 18)}}>Introducing yourself</Text> 
@@ -46,7 +46,7 @@ function WelcomeScreen() {
           <TouchableOpacity style={{backgroundColor: "#F5891C", borderRadius:5, width:250}}>
             <Text style={{textAlign: 'center', marginTop:15, marginBottom:15, color: "white", fontSize:Responsive( 18)}}> Let's chat! </Text>
           </TouchableOpacity>
-        </View>
+    </View>
     </SafeAreaView>
   );
 }
